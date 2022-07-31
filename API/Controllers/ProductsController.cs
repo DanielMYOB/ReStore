@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.Extensions;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +19,20 @@ public class ProductsController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Product>>> GetProducts()
+    public async Task<ActionResult<List<Product>>> GetProducts(
+        string orderBy,
+        string searchTerm,
+        string brands,
+        string types
+    )
     {
-        return await _context.Products.ToListAsync();
+        var query = _context.Products
+            .Sort(orderBy)
+            .Search(searchTerm)
+            .Filter(brands, types)
+            .AsQueryable();
+
+        return await query.ToListAsync();
     }
 
     [HttpGet("{id}")]

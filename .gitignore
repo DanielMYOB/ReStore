@@ -457,3 +457,4 @@ $RECYCLE.BIN/
 # Misc.
 API/appsettings.json
 API/store.db
+API/store.**-**

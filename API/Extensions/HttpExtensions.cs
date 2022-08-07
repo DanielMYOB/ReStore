@@ -1,24 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using API.RequestHelpers;
 using Microsoft.AspNetCore.Http;
 
-namespace API.Extensions;
-
-public static class HttpExtensions
+namespace API.Extensions
 {
-    public static void AddPaginationHeader(this HttpResponse response, MetaData metaData)
+    public static class HttpExtensions
     {
-        var options = new JsonSerializerOptions
+        public static void AddPaginationHeader(this HttpResponse response, MetaData metaData)
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+            var options = new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
 
-        response.Headers.Add("Pagination", JsonSerializer.Serialize(metaData, options));
-
-        response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+            response.Headers.Add("Pagination", JsonSerializer.Serialize(metaData, options));
+            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+        }
     }
 }

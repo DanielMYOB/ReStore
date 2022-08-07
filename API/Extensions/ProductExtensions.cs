@@ -1,55 +1,49 @@
 using System.Collections.Generic;
 using System.Linq;
-using API.Models;
+using API.Entities;
 
-namespace API.Extensions;
-
-public static class ProductExtensions
+namespace API.Extensions
 {
-    public static IQueryable<Product> Sort(this IQueryable<Product> query, string orderBy)
+    public static class ProductExtensions
     {
-        if (string.IsNullOrWhiteSpace(orderBy))
-            return query.OrderBy(p => p.Name);
-
-        query = orderBy switch
+        public static IQueryable<Product> Sort(this IQueryable<Product> query, string orderBy)
         {
-            "price" => query.OrderBy(p => p.Price),
-            "priceDesc" => query.OrderByDescending(p => p.Price),
-            _ => query.OrderBy(p => p.Name)
-        };
+            if (string.IsNullOrEmpty(orderBy)) return query.OrderBy(p => p.Name); 
 
-        return query;
-    }
+            query = orderBy switch
+            {
+                "price" => query.OrderBy(p => p.Price),
+                "priceDesc" => query.OrderByDescending(p => p.Price),
+                _ => query.OrderBy(p => p.Name)
+            };
 
-    public static IQueryable<Product> Search(this IQueryable<Product> query, string searchTerm)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm))
             return query;
+        }
 
-        var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
+        public static IQueryable<Product> Search(this IQueryable<Product> query, string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm)) return query;
 
-        return query.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
-    }
+            var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
 
-    public static IQueryable<Product> Filter(
-        this IQueryable<Product> query,
-        string brands,
-        string types
-    )
-    {
-        var brandList = new List<string>();
-        var typeList = new List<string>();
+            return query.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
+        }
 
-        if (!string.IsNullOrEmpty(brands))
-            brandList.AddRange(brands.ToLower().Split(",").ToList());
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, string brands, string types)
+        {
+            var brandList = new List<string>();
+            var typeList = new List<string>();
 
-        if (!string.IsNullOrEmpty(types))
-            typeList.AddRange(types.ToLower().Split(",").ToList());
+            if (!string.IsNullOrEmpty(brands))
+                brandList.AddRange(brands.ToLower().Split(",").ToList());
 
-        query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
+            if (!string.IsNullOrEmpty(types))
+                typeList.AddRange(types.ToLower().Split(",").ToList());
 
-        query = query.Where(p => typeList.Count == 0 || typeList.Contains(p.Type.ToLower()));
+            query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
+            query = query.Where(p => typeList.Count == 0 || typeList.Contains(p.Type.ToLower()));
 
-        return query;
+            return query;
+        }
     }
 }

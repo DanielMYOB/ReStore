@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using API.Data;
-using API.Models;
+using API.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,6 @@ namespace API
             var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
             try
             {
                 await context.Database.MigrateAsync();
